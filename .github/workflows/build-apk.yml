@@ -1,0 +1,72 @@
+name: Build Brohi Clips Pro APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.5'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant Execute Permission
+        run: chmod +x ./gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Rename APK for Clarity
+        run: |
+          mkdir -p release-output
+          cp app/build/outputs/apk/debug/*.apk release-output/Brohi-Clips-Pro-v2.0.0.apk
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Brohi-Clips-Pro-v2.0.0
+          path: release-output/*.apk
+          if-no-files-found: error
+
+      - name: Create GitHub Release with APK
+        uses: softprops/action-gh-release@v2
+        if: github.ref == 'refs/heads/main'
+        with:
+          tag_name: v2.0.0
+          name: Brohi Clips Pro v2.0.0 (Official Release)
+          body: |
+            ### 👑 Brohi Clips Pro v2.0.0
+            **Created & Architected by Shahzaib Ali**
+
+            #### ✨ What's New:
+            - **Strict BYOK (Bring Your Own Key)**: Zero developer keys used. Users enter their own free Google Gemini API key.
+            - **Ultra-Luxurious 3D Interface**: Imperial Gold & Obsidian aesthetic with interactive Three.js 3D core.
+            - **3D Kinetic Subtitles**: Advanced `.ass` subtitles with isometric 3D depth and pop-up bounce.
+            - **Creator Showcase**: Dedicated in-app page honoring creator **Shahzaib Ali**.
+            - **100% On-Device Video Engine**: Powered by embedded FFmpeg and Python yt-dlp.
+
+            #### 📲 Download APK below:
+          files: release-output/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

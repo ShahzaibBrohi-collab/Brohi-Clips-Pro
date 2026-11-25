@@ -1,0 +1,47 @@
+apply plugin: 'com.android.application'
+
+android {
+    namespace "com.brohiclips.pro"
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "com.brohiclips.pro"
+        minSdkVersion 24
+        targetSdkVersion 34
+        versionCode 2
+        versionName "2.0.0"
+
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a', 'x86_64'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        jniLibs {
+            useLegacyPackaging = true
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
+
+    // Real On-Device Video Engines
+    implementation 'io.github.junkfood02.youtubedl-android:library:0.17.2'
+    implementation 'io.github.junkfood02.youtubedl-android:ffmpeg:0.17.2'
+}

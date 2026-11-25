@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#08080c">
+  <title>Brohi Clips Pro — 3D AI Shorts Studio</title>
+  <link rel="stylesheet" href="css/app.css">
+  <script src="js/three.min.js"></script>
+</head>
+<body>
+  <!-- 3D Background Three.js Canvas -->
+  <canvas id="three-bg"></canvas>
+
+  <!-- Luxury App Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="logo-3d-box">
+        <span class="logo-cube">B</span>
+      </div>
+      <div class="brand-text">
+        <h1 class="glow-gold">BROHI CLIPS <span class="badge-pro">PRO</span></h1>
+        <span class="badge-subtitle">3D AI STUDIO</span>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-nav-creator" class="btn-icon-gold" title="Meet the Developer">👑</button>
+      <button id="btn-nav-settings" class="btn-icon-3d" title="Settings">⚙️</button>
+    </div>
+  </header>
+
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-page="home">
+      <span class="nav-icon">🎬</span>
+      <span class="nav-label">Studio</span>
+    </button>
+    <button class="nav-item" data-page="vault">
+      <span class="nav-icon">📁</span>
+      <span class="nav-label">Vault</span>
+    </button>
+    <button class="nav-item" data-page="creator">
+      <span class="nav-icon">👑</span>
+      <span class="nav-label">Creator</span>
+    </button>
+    <button class="nav-item" data-page="settings">
+      <span class="nav-icon">⚙️</span>
+      <span class="nav-label">Settings</span>
+    </button>
+  </nav>
+
+  <!-- Main View Router -->
+  <main id="app"></main>
+
+  <!-- 3D AI Talking Avatar Preview Badge -->
+  <div id="avatar-container" class="avatar-float hidden">
+    <div class="avatar-ring">
+      <canvas id="avatar-canvas" width="120" height="120"></canvas>
+    </div>
+    <div class="avatar-speech" id="avatar-speech">Brohi AI Ready!</div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
