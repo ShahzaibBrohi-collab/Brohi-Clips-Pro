@@ -29,8 +29,10 @@ import com.yausername.youtubedl_android.YoutubeDLResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -117,17 +119,46 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        private File getFFmpegExecutable() {
+            File direct = new File(getNoBackupFilesDir(), "youtubedl-android/packages/ffmpeg/ffmpeg");
+            if (direct.exists()) {
+                direct.setExecutable(true);
+                return direct;
+            }
+            File fallback = new File(getApplicationInfo().nativeLibraryDir, "libffmpeg.so");
+            if (fallback.exists()) {
+                fallback.setExecutable(true);
+                return fallback;
+            }
+            return direct;
+        }
+
         @JavascriptInterface
         public void ff(String argsJson, String callbackId) {
             executor.execute(() -> {
                 try {
                     JSONArray arr = new JSONArray(argsJson);
                     List<String> cmd = new ArrayList<>();
+                    File ffmpegBin = getFFmpegExecutable();
+                    cmd.add(ffmpegBin.getAbsolutePath());
                     for (int i = 0; i < arr.length(); i++) {
                         cmd.add(arr.getString(i));
                     }
-                    FFmpeg.getInstance().execute(cmd.toArray(new String[0]), null);
-                    sendJsCallback(callbackId, true, "success");
+                    ProcessBuilder pb = new ProcessBuilder(cmd);
+                    pb.redirectErrorStream(true);
+                    Process process = pb.start();
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            Log.d(TAG, "FFmpeg: " + line);
+                        }
+                    }
+                    int exitCode = process.waitFor();
+                    if (exitCode == 0) {
+                        sendJsCallback(callbackId, true, "success");
+                    } else {
+                        sendJsCallback(callbackId, false, "FFmpeg exit code: " + exitCode);
+                    }
                 } catch (Exception e) {
                     sendJsCallback(callbackId, false, e.getMessage());
                 }
